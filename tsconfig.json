@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": "./src",
-    "declaration": true,
+    "declaration": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "lib": ["ES2018"],
@@ -9,7 +9,7 @@
     "noImplicitReturns": true,
     "outDir": "./dist",
     "removeComments": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "strict": true,
     "target": "ES2018",
     "useDefineForClassFields": true

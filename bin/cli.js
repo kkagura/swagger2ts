@@ -1,4 +1,5 @@
-const parser = require("yargs-parser");
+import parser from "yargs-parser";
+import { run } from "../dist/index.js";
 
 const HELP = `Usage
   $ openapi-typescript [input] [options]
@@ -10,7 +11,6 @@ Options
 `;
 
 const [, , ...args] = process.argv;
-console.log(args);
 const flags = parser(args, {
   array: ["header"],
   boolean: [],
@@ -19,6 +19,7 @@ const flags = parser(args, {
   alias: {
     help: ["h"],
     output: ["o"],
+    input: ["i"],
   },
 });
 
@@ -26,3 +27,5 @@ if (flags.help || flags.h) {
   console.log(flags.help, flags.h, "============");
   process.exit(0);
 }
+
+run(flags.i, flags.o);

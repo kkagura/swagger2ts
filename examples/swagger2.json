@@ -1,0 +1,137 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "9.0",
+    "title": "无车运营平台",
+    "license": { "name": "license", "url": "licenseUrl" }
+  },
+  "host": "192.168.6.12:9118",
+  "basePath": "/sijibao-operation",
+  "tags": [
+    { "name": "ETC服务", "description": "ETC Controller" },
+    { "name": "gis相关", "description": "Gis Controller" },
+    {
+      "name": "产品配置增值产品",
+      "description": "Cargo Guarantee Product Controller"
+    },
+    { "name": "企业相关接口", "description": "Company Controller" },
+    {
+      "name": "企业配置增值产品",
+      "description": "Company Value Added Products Setting Controller"
+    },
+    { "name": "信息费相关接口", "description": "Information Controller" },
+    { "name": "免单点登陆服务", "description": "Open Controller" },
+    { "name": "司机相关接口", "description": "Driver Controller" },
+    {
+      "name": "地址白名单接口",
+      "description": "Monitor Address White List Controller"
+    },
+    { "name": "字典相关接口", "description": "Rail Dict Controller" },
+    { "name": "庆达报号模块", "description": "Book Controller" },
+    {
+      "name": "开放平台-企业关联",
+      "description": "Customer Company Relation Controller"
+    },
+    { "name": "开放平台-接口管理", "description": "Customer Api Controller" },
+    {
+      "name": "开放平台-订阅管理",
+      "description": "Customer Subscribe Controller"
+    },
+    { "name": "开放平台-首页", "description": "Customer Info Controller" },
+    { "name": "微信相关接口", "description": "Wechat Controller" },
+    { "name": "承运公司相关接口", "description": "Carrier Controller" },
+    { "name": "服务评价相关接口", "description": "Evaluation Controller" },
+    { "name": "梦网短信", "description": "Sms Message Callback Controller" },
+    {
+      "name": "白名单操作日志相关接口",
+      "description": "Whitelist Operated Controller"
+    },
+    { "name": "白名单相关接口", "description": "Whitelist Controller" },
+    { "name": "竞标管理", "description": "Bidding Controller" },
+    { "name": "系统相关接口", "description": "Sys Controller" },
+    {
+      "name": "规则日志相关接口",
+      "description": "Driver Import Rule Log Controller"
+    },
+    { "name": "规则相关接口", "description": "Driver Import Rule Controller" },
+    { "name": "货源相关接口", "description": "Stock Controller" },
+    {
+      "name": "货运险回调模块",
+      "description": "Stock Insurance Callback Controller"
+    },
+    { "name": "货运险模块", "description": "Stock Insurance Controller" },
+    { "name": "车队长模块", "description": "Captain Controller" },
+    {
+      "name": "运单轨迹相关接口(/orderTrack)",
+      "description": "Order Track Util Controller"
+    },
+    {
+      "name": "运费贷司机黑名单",
+      "description": "Freight Loan Black List Controller"
+    },
+    { "name": "配置相关接口", "description": "Config Controller" }
+  ],
+  "definitions": {
+    "AbnormalLevelReq": {
+      "type": "object",
+      "required": ["abnormalName", "abnormalTypes"],
+      "properties": {
+        "abnormalName": { "type": "string", "description": "异常等级名称" },
+        "abnormalTypes": {
+          "type": "array",
+          "description": "异常类型集合",
+          "items": { "type": "integer", "format": "int32" }
+        }
+      },
+      "title": "AbnormalLevelReq"
+    },
+    "AbnormalTrackListReq": {
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string", "description": "企业名称" },
+        "pageNum": {
+          "type": "integer",
+          "format": "int32",
+          "description": "起始数据,从1开始 默认1"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32",
+          "description": "每页显示记录数 默认10"
+        },
+        "start": { "type": "integer", "format": "int32" }
+      },
+      "title": "AbnormalTrackListReq"
+    },
+    "AbnormalTrackReq": {
+      "type": "object",
+      "properties": {
+        "abnormalLevelIds": {
+          "type": "array",
+          "description": "异常等级主键集合",
+          "items": { "type": "integer", "format": "int64" }
+        },
+        "companyCode": { "type": "string", "description": "企业code" }
+      },
+      "title": "AbnormalTrackReq"
+    },
+    "AbnormalTrackRsp": {
+      "type": "object",
+      "properties": {
+        "abnormalLevelNames": {
+          "type": "string",
+          "description": "异常类型名称"
+        },
+        "companyName": { "type": "string", "description": "异常类型名称" },
+        "createName": { "type": "string", "description": "创建人" },
+        "createTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "创建时间"
+        },
+        "id": { "type": "integer", "format": "int64", "description": "主键" }
+      },
+      "title": "AbnormalTrackRsp"
+    }
+  }
+}
