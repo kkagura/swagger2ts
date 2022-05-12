@@ -2,18 +2,18 @@ import fs from "fs-extra";
 import path from "path";
 import { Definition } from "types/definitions.js";
 import { URL } from "url";
+import undici from "undici";
+import ora from "ora";
 
 export function load(
   input: string
 ): Promise<{ definitions: { [k: string]: Definition } }> {
   if (isUrl(input)) {
-    return new Promise((resolve) => resolve({ definitions: {} }));
+    return fetch(input);
   } else {
     const string = fs.readFileSync(resolve(input)).toString();
     try {
-      return new Promise((resolve) =>
-        resolve(JSON.parse(string.replace(/«|»/g, "")))
-      );
+      return new Promise((resolve) => resolve(parseJson(string)));
     } catch (error) {
       throw new Error("不合法的JSON文件");
     }
@@ -36,4 +36,26 @@ export function resolve(url: string): URL {
   }
 
   return localPath;
+}
+
+function parseJson(text: string) {
+  return JSON.parse(text.replace(/«|»/g, ""));
+}
+
+function fetch(url: string) {
+  const spinner = ora(`正在请求${url}`).start();
+  return undici
+    .request(url)
+    .then((res) => {
+      return res.body.text().then((text) => {
+        try {
+          return parseJson(text);
+        } catch (error) {
+          return Promise.reject(new Error("不合法的JSON文件"));
+        }
+      });
+    })
+    .finally(() => {
+      spinner.clear();
+    });
 }

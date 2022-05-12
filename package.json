@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc && node ./bin/cli -i ./examples/swagger.json -o yyy.ts"
   },
@@ -12,6 +13,8 @@
   "license": "ISC",
   "dependencies": {
     "fs-extra": "^10.1.0",
+    "ora": "^6.1.0",
+    "undici": "^5.2.0",
     "yargs-parser": "^21.0.1"
   },
   "devDependencies": {
