@@ -1,13 +1,11 @@
 import fs from "fs-extra";
 import path from "path";
-import { Definition } from "types/definitions.js";
+import Swagger from "./types/index";
 import { URL } from "url";
 import undici from "undici";
 import ora from "ora";
 
-export function load(
-  input: string
-): Promise<{ definitions: { [k: string]: Definition } }> {
+export function load(input: string): Promise<Swagger> {
   if (isUrl(input)) {
     return fetch(input);
   } else {
@@ -56,6 +54,6 @@ function fetch(url: string) {
       });
     })
     .finally(() => {
-      spinner.clear();
+      spinner.stop();
     });
 }
