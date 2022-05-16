@@ -12,7 +12,8 @@
     "sourceMap": false,
     "strict": true,
     "target": "ES2018",
-    "useDefineForClassFields": true
+    "useDefineForClassFields": true,
+    "noImplicitAny": false
   },
   "exclude": [""],
   "include": ["src"]

@@ -6,7 +6,7 @@ import {
 } from "./utils.js";
 
 const COMMENT_RE = /\*\//g;
-const LB_RE = /\r?\n/g;
+export const LB_RE = /\r?\n/g;
 
 export function transformSchemaObjMap(
   objMap: Record<string, any>,
@@ -24,7 +24,7 @@ export function transformSchemaObjMap(
   return output;
 }
 
-function transformSchemaObj(node: any): string {
+export function transformSchemaObj(node: any): string {
   let type = "";
   switch (nodeType(node)) {
     case "ref": {

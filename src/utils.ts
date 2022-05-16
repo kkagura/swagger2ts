@@ -110,3 +110,11 @@ export function tsUnionOf(types: Array<string | number | boolean>): string {
   if (types.length === 1) return `${types[0]}`; // don’t add parentheses around one thing
   return `(${types.join(") | (")})`;
 }
+const DEFINITION_PREFIX = "#/definitions/";
+export function convertRefKey(ref: string) {
+  return ref.substring(DEFINITION_PREFIX.length);
+}
+
+export function isValidName(name: string) {
+  return /^[a-zA-Z]+[a-zA-Z0-9_]*$/.test(name);
+}
