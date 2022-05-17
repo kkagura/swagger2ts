@@ -1,3 +1,5 @@
+import { ObjectScheme } from "types";
+
 const SINGLE_QUOTE_RE = /'/g;
 type SchemaObjectType =
   | "anyOf"
@@ -117,4 +119,28 @@ export function convertRefKey(ref: string) {
 
 export function isValidName(name: string) {
   return /^[a-zA-Z]+[a-zA-Z0-9_]*$/.test(name);
+}
+
+export function upperFirst(str: string) {
+  return str.at(0)?.toUpperCase() + str.substring(1);
+}
+
+export function collectRefType(value: ObjectScheme) {
+  const res: string[] = [];
+  if (!value) return res;
+  if (value.$ref) {
+    res.push(convertRefKey(value.$ref));
+  } else if (value.type === "array") {
+    res.push(...collectRefType(value.items || {}));
+  } else if (value.type === "object" || value.properties) {
+    Object.keys(value.properties || {}).forEach((key) => {
+      res.push(...collectRefType(value.properties![key]));
+    });
+  }
+  return res.reduce((pre, curr) => {
+    if (!pre.includes(curr)) {
+      pre.push(curr);
+    }
+    return pre;
+  }, [] as string[]);
 }

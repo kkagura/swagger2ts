@@ -21,7 +21,7 @@ export interface ObjectScheme {
     [key: string]: ObjectScheme;
   };
   items?: ObjectScheme;
-  $ref?: any;
+  $ref?: string;
 }
 export type Parameter = {
   name: string;
@@ -47,6 +47,7 @@ export interface SwaggerRequest {
     default: Response;
   };
   parameters: Array<Parameter>;
+  tags: string[];
 }
 
 export interface SwaggerPath {
@@ -70,4 +71,5 @@ export default interface Swagger {
   definitions: {
     [definition: string]: ObjectScheme;
   };
+  tags: { name: string; description: string }[];
 }

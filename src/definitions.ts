@@ -1,4 +1,6 @@
 import {
+  convertRefKey,
+  isValidName,
   nodeType,
   ParsedSimpleValue,
   parseSingleSimpleValue,
@@ -28,7 +30,9 @@ export function transformSchemaObj(node: any): string {
   let type = "";
   switch (nodeType(node)) {
     case "ref": {
-      type = node.$ref.replace(/#\/definitions\//, ""); // these were transformed at load time when remote schemas were resolved; return as-is
+      type = convertRefKey(node.$ref);
+      if (!isValidName(type)) {
+      }
       break;
     }
     case "string":

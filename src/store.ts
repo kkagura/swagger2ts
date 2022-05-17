@@ -7,7 +7,10 @@ export function getRef(k: string) {
   return refMap[k] || k;
 }
 
-const summaries: null | string[] = null;
-export function summaryExist(summary: string) {
-  return !summaries || summaries.includes(summary);
+let tagsStore: null | string[] = null;
+export function setTags(tags: string[]) {
+  tagsStore = [...tags];
+}
+export function tagExist(tag: string) {
+  return !tagsStore || tagsStore.includes(tag);
 }
