@@ -35,6 +35,9 @@ function convertParams(params: SwaggerRequest["parameters"]) {
   let ps = "";
   let cs = "";
   for (let i = 0; i < params.length; i++) {
+    if (params[i].in === "header") {
+      continue;
+    }
     const p = params[i].name;
     const type = transformSchemaObj(params[i].schema || params[i]);
     ps += `,${p}: ${type}`;

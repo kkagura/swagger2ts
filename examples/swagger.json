@@ -4395,6 +4395,13 @@
         "goodsMinValue": {
           "type": "string",
           "description": "货物价值最小值(万元)"
+        },
+        "children": {
+          "type": "array",
+          "description": "产品配置明细",
+          "items": {
+            "$ref": "#/definitions/AddCargoGuaranteeProductsDetailReq"
+          }
         }
       },
       "title": "AddCargoGuaranteeProductsDetailReq"

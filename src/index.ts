@@ -3,9 +3,9 @@ import fs from "fs-extra";
 import { load, resolve } from "./load.js";
 import { convert } from "./transform.js";
 import prompts from "prompts";
-import { setTags, tagExist } from "./store.js";
-import Swagger, { SwaggerRequest } from "types/index.js";
-import { collectRefType } from "./utils.js";
+import { getDefinitions, setRef, setTags, tagExist } from "./store.js";
+import Swagger, { ObjectScheme, SwaggerRequest } from "types/index.js";
+import { collectRefType, convertRefKey, isValidName } from "./utils.js";
 const { writeFileSync } = fs;
 
 export async function run(input: string, output: string, tag: boolean) {
@@ -25,11 +25,24 @@ export async function run(input: string, output: string, tag: boolean) {
       choices,
     };
     const answer = await prompts([q]);
-    setTags(answer.tags);
+    if (!answer.tags.length) {
+      console.log("未选择任何分类，默认生成全部接口");
+    } else {
+      setTags(answer.tags);
+    }
   }
   pre(res);
-  let data = transformSchemaObjMap(res.definitions);
+  let data = "";
+  // let data = transformSchemaObjMap(res.definitions);
   data += convert(res);
+  let defs = "";
+  const definitions = getDefinitions();
+  for (let i = 0; i < definitions.length; i++) {
+    defs += transformSchemaObjMap({
+      [definitions[i]]: res.definitions[definitions[i]],
+    });
+  }
+  data = defs + data;
   writeFileSync(output, data);
 }
 
@@ -47,6 +60,21 @@ function pre(swagger: Swagger) {
       request.parameters?.forEach((p) => {
         types.push(...collectRefType(p.type ? p : p.schema));
       });
+      if (method !== "get") {
+        request.parameters?.forEach((p) => {
+          if (
+            p.in === "body" &&
+            request.parameters?.filter((i) => i.in === "body").length === 1
+          ) {
+            if (p.schema?.$ref) {
+              const ref = convertRefKey(p.schema.$ref);
+              if (!isValidName(ref)) {
+                setRef(ref, request.operationId + "Data");
+              }
+            }
+          }
+        });
+      }
       if (request.responses["200"]?.schema?.$ref?.includes("EntityResult")) {
       }
       types.push(...collectRefType(request.responses["200"]?.schema));
@@ -61,7 +89,6 @@ function pre(swagger: Swagger) {
       delete swagger.paths[key];
     }
   });
-  console.log(types);
   // Object.keys(swagger.definitions).forEach((name) => {
   //   if (!types.includes(name)) {
   //     delete swagger.definitions[name];

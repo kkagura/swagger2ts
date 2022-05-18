@@ -1,3 +1,4 @@
+import { addDefinition, getRef } from "./store.js";
 import {
   convertRefKey,
   isValidName,
@@ -19,7 +20,9 @@ export function transformSchemaObjMap(
     const comments = createComment(v);
     output += comments;
     output += "\n";
-    output += root ? `export interface ${k}` : `${k}: `;
+    output += root
+      ? `export interface ${isValidName(k) ? k : getRef(k)}`
+      : `${k}: `;
     output += transformSchemaObj(v);
     output += "\n";
   });
@@ -31,7 +34,10 @@ export function transformSchemaObj(node: any): string {
   switch (nodeType(node)) {
     case "ref": {
       type = convertRefKey(node.$ref);
+      addDefinition(type);
       if (!isValidName(type)) {
+        const pre = type;
+        type = getRef(type) || "unknown";
       }
       break;
     }

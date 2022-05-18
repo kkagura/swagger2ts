@@ -37,7 +37,7 @@ export function resolve(url: string): URL {
 }
 
 function parseJson(text: string) {
-  return JSON.parse(text.replace(/«|»/g, ""));
+  return JSON.parse(text);
 }
 
 function fetch(url: string) {
