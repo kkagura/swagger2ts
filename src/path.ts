@@ -13,9 +13,15 @@ export function convertPath(path: SwaggerPath, url: string) {
 }
 
 function convertRequest(request: SwaggerRequest, method: string, url: string) {
-  const { operationId, parameters, summary } = request;
+  const { operationId, parameters, summary, responses } = request;
+  const rep = responses["200"];
+  console.log(rep);
+  const returnType = transformSchemaObj(rep.schema || rep);
+  const returnStr = rep.schema?.$ref ? `: Promise<${returnType}>` : "";
   const { cs, ps } = convertParams(parameters);
-  const codes: string[] = [`export function ${operationId}(${ps}) {`];
+  const codes: string[] = [
+    `export function ${operationId}(${ps}) ${returnStr} {`,
+  ];
   codes.push("}");
   const res = `/**
   * ${summary}

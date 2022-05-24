@@ -5,7 +5,13 @@ import { convert } from "./transform.js";
 import prompts from "prompts";
 import { getDefinitions, setRef, setTags, tagExist } from "./store.js";
 import Swagger, { ObjectScheme, SwaggerRequest } from "types/index.js";
-import { collectRefType, convertRefKey, isValidName } from "./utils.js";
+import {
+  collectRefType,
+  convertRefKey,
+  createRefName,
+  isValidName,
+} from "./utils.js";
+import { removeRef, removeWrapper } from "./removeRef.js";
 const { writeFileSync } = fs;
 
 export async function run(input: string, output: string, tag: boolean) {
@@ -48,6 +54,7 @@ export async function run(input: string, output: string, tag: boolean) {
 
 function pre(swagger: Swagger) {
   let types: string[] = [];
+  removeRef(swagger);
   Object.keys(swagger.paths).forEach((key) => {
     const path = swagger.paths[key];
     Object.keys(path).forEach((method) => {
@@ -75,7 +82,11 @@ function pre(swagger: Swagger) {
           }
         });
       }
-      if (request.responses["200"]?.schema?.$ref?.includes("EntityResult")) {
+      if (request.responses["200"]?.schema?.$ref) {
+        const ref = convertRefKey(request.responses["200"].schema.$ref);
+        if (!isValidName(ref)) {
+          setRef(ref, request.operationId + "Result");
+        }
       }
       types.push(...collectRefType(request.responses["200"]?.schema));
     });

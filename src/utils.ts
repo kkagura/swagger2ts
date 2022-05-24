@@ -1,4 +1,4 @@
-import { ObjectScheme } from "types";
+import Swagger, { ObjectScheme } from "types";
 
 const SINGLE_QUOTE_RE = /'/g;
 type SchemaObjectType =
@@ -115,6 +115,10 @@ export function tsUnionOf(types: Array<string | number | boolean>): string {
 const DEFINITION_PREFIX = "#/definitions/";
 export function convertRefKey(ref: string) {
   return ref.substring(DEFINITION_PREFIX.length);
+}
+
+export function createRefName(definitionName: string) {
+  return DEFINITION_PREFIX + definitionName;
 }
 
 export function isValidName(name: string) {
