@@ -13,19 +13,38 @@ export function convertPath(path: SwaggerPath, url: string) {
 }
 
 function convertRequest(request: SwaggerRequest, method: string, url: string) {
-  const { operationId, parameters, summary, responses } = request;
+  const { operationId, parameters = [], summary, responses } = request;
   const rep = responses["200"];
-  console.log(rep);
   const returnType = transformSchemaObj(rep.schema || rep);
-  const returnStr = rep.schema?.$ref ? `: Promise<${returnType}>` : "";
-  const { cs, ps } = convertParams(parameters);
-  const codes: string[] = [
-    `export function ${operationId}(${ps}) ${returnStr} {`,
-  ];
+  console.log(operationId, returnType, rep.schema);
+  const returnStr = rep.schema?.$ref ? `<${returnType}>` : "";
+  const { comments, params } = convertParams(parameters);
+  let bodyData: string[] = [];
+  bodyData.push(`url: '${url}'`);
+  bodyData.push(`method: '${method}'`);
+  const queryParameters = parameters
+    .filter((p) => p.in === "query")
+    .map((p) => p.name);
+  if (queryParameters.length > 0) {
+    bodyData.push(`params: {${queryParameters.join(", ")}}`);
+  }
+  const dataParameters = parameters
+    .filter((p) => p.in === "formData" || p.in === "body")
+    .map((p) => p.name);
+  if (dataParameters.length == 1 && dataParameters[0] === "data") {
+    bodyData.push("data");
+  } else if (dataParameters.length) {
+    bodyData.push(`data: {${dataParameters.join(", ")}}`);
+  }
+
+  const codes: string[] = [`export function ${operationId}(${params}) {`];
+  codes.push(`return XHR${returnStr}({`);
+  codes.push(...bodyData.map((item) => item + ","));
+  codes.push("})");
   codes.push("}");
   const res = `/**
   * ${summary}
-  ${cs}
+  ${comments}
   */
  ${codes.join("\n")}`;
   return res;
@@ -52,7 +71,7 @@ function convertParams(params: SwaggerRequest["parameters"]) {
   ps = ps.substring(1);
   cs = cs.substring(1);
   return {
-    ps,
-    cs,
+    params: ps,
+    comments: cs,
   };
 }
