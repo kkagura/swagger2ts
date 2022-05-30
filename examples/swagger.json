@@ -74,7 +74,7 @@
   "paths": {
     "/bidding/driverOrderList": {
       "post": {
-        "tags": ["竞标管理"],
+        "tags": [""],
         "summary": "司机报价列表数据查询",
         "operationId": "driverOrderListUsingPOST",
         "consumes": ["application/json"],
@@ -105,7 +105,7 @@
     },
     "/bidding/get": {
       "post": {
-        "tags": ["竞标管理"],
+        "tags": [""],
         "summary": "获取招标信息详情",
         "operationId": "getUsingPOST",
         "consumes": ["application/json"],
@@ -161,7 +161,7 @@
     },
     "/bidding/getPosterData": {
       "get": {
-        "tags": ["竞标管理"],
+        "tags": [""],
         "summary": "获取海报数据",
         "operationId": "getPosterDataUsingGET",
         "produces": ["*/*"],
@@ -188,7 +188,7 @@
     },
     "/bidding/logistics/pageList": {
       "post": {
-        "tags": ["竞标管理"],
+        "tags": [""],
         "summary": "招标信息列表查询",
         "operationId": "queryBiddingPageListByLogisticsUsingPOST",
         "consumes": ["application/json"],

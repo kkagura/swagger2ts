@@ -36,7 +36,6 @@ export function transformSchemaObj(node: any): string {
       type = convertRefKey(node.$ref);
       addDefinition(type);
       if (!isValidName(type)) {
-        const pre = type;
         type = getRef(type) || "unknown";
       }
       break;

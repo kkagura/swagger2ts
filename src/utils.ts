@@ -126,7 +126,7 @@ export function isValidName(name: string) {
 }
 
 export function upperFirst(str: string) {
-  return str.at(0)?.toUpperCase() + str.substring(1);
+  return str[0]?.toUpperCase() + str.substring(1);
 }
 
 export function collectRefType(value: ObjectScheme) {

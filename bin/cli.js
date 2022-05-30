@@ -9,6 +9,7 @@ Options
   --input, -i                  Specify input file
   --output, -o                 Specify output file
   --tag, -t
+  --list, -l
 `;
 
 const [, , ...args] = process.argv;
@@ -20,6 +21,7 @@ const flags = parser(args, {
     output: ["o"],
     input: ["i"],
     tag: ["t"],
+    list: ["l"],
   },
 });
 

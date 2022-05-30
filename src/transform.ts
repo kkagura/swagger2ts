@@ -5,7 +5,7 @@ export function convert(swagger: Swagger, summaries?: string[]) {
   const { paths } = swagger;
   let res = "";
   Object.keys(paths).forEach((url) => {
-    res += convertPath(paths[url], url);
+    res += convertPath(swagger, paths[url], url);
   });
   return res;
 }

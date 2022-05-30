@@ -1,22 +1,40 @@
 import { transformSchemaObj } from "./definitions.js";
-import { SwaggerPath, SwaggerRequest } from "types";
-import { convertRefKey } from "./utils.js";
+import Swagger, { SwaggerPath, SwaggerRequest } from "types";
+import { convertRefKey, nodeType } from "./utils.js";
+import { getRef } from "store.js";
 
-export function convertPath(path: SwaggerPath, url: string) {
+export function convertPath(swagger: Swagger, path: SwaggerPath, url: string) {
   let codes = "\n\n";
   Object.keys(path).forEach((method) => {
     const swaggerRequest = path[method] as SwaggerRequest;
-    const res = convertRequest(swaggerRequest, method, url);
+    const res = convertRequest(swagger, swaggerRequest, method, url);
     codes += res;
   });
   return codes;
 }
 
-function convertRequest(request: SwaggerRequest, method: string, url: string) {
+function convertRequest(
+  swagger: Swagger,
+  request: SwaggerRequest,
+  method: string,
+  url: string
+) {
   const { operationId, parameters = [], summary, responses } = request;
   const rep = responses["200"];
-  const returnType = transformSchemaObj(rep.schema || rep);
-  console.log(operationId, returnType, rep.schema);
+  let returnType = "";
+  if (rep.schema?.$ref) {
+    const key = convertRefKey(rep.schema?.$ref);
+    const obj = swagger.definitions[key];
+    if (
+      ["string", "number", "boolean", "unknown", "any"].includes(nodeType(obj))
+    ) {
+      returnType = transformSchemaObj(obj);
+    } else {
+      returnType = transformSchemaObj(rep.schema || rep);
+    }
+  } else {
+    returnType = transformSchemaObj(rep.schema || rep);
+  }
   const returnStr = rep.schema?.$ref ? `<${returnType}>` : "";
   const { comments, params } = convertParams(parameters);
   let bodyData: string[] = [];
@@ -31,8 +49,8 @@ function convertRequest(request: SwaggerRequest, method: string, url: string) {
   const dataParameters = parameters
     .filter((p) => p.in === "formData" || p.in === "body")
     .map((p) => p.name);
-  if (dataParameters.length == 1 && dataParameters[0] === "data") {
-    bodyData.push("data");
+  if (dataParameters.length == 1) {
+    bodyData.push("data:" + dataParameters[0]);
   } else if (dataParameters.length) {
     bodyData.push(`data: {${dataParameters.join(", ")}}`);
   }

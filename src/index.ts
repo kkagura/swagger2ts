@@ -10,6 +10,7 @@ import {
   convertRefKey,
   createRefName,
   isValidName,
+  upperFirst,
 } from "./utils.js";
 import { removeRef, removeWrapper } from "./removeRef.js";
 const { writeFileSync } = fs;
@@ -76,7 +77,7 @@ function pre(swagger: Swagger) {
             if (p.schema?.$ref) {
               const ref = convertRefKey(p.schema.$ref);
               if (!isValidName(ref)) {
-                setRef(ref, request.operationId + "Data");
+                setRef(ref, upperFirst(request.operationId) + "Data");
               }
             }
           }
@@ -85,7 +86,7 @@ function pre(swagger: Swagger) {
       if (request.responses["200"]?.schema?.$ref) {
         const ref = convertRefKey(request.responses["200"].schema.$ref);
         if (!isValidName(ref)) {
-          setRef(ref, request.operationId + "Result");
+          setRef(ref, upperFirst(request.operationId) + "Result");
         }
       }
       types.push(...collectRefType(request.responses["200"]?.schema));
