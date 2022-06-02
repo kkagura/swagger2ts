@@ -12,6 +12,9 @@
   "bin": {
     "wyyt-swagger-to-ts": "bin/cli.js"
   },
+  "engines": {
+    "node": ">= 12.0.0"
+  },
   "type": "module",
   "author": "王建",
   "license": "ISC",
