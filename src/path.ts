@@ -25,10 +25,12 @@ function convertRequest(
   if (rep.schema?.$ref) {
     const key = convertRefKey(rep.schema?.$ref);
     const obj = swagger.definitions[key];
-    if (
-      ["string", "number", "boolean", "unknown", "any"].includes(nodeType(obj))
-    ) {
+    const type = nodeType(obj);
+    if (["string", "number", "boolean", "unknown", "any"].includes(type)) {
       returnType = transformSchemaObj(obj);
+    } else if (type === "array" && obj.items) {
+      const itemType = transformSchemaObj(obj.items);
+      returnType = `${itemType}[]`;
     } else {
       returnType = transformSchemaObj(rep.schema || rep);
     }
