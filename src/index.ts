@@ -24,9 +24,11 @@ export async function run(
   }
 ) {
   const { tag, mock } = options;
-  console.log(input, output, tag, mock);
   setMock(mock);
   const res = await load(input);
+  if (res.swagger !== "2.0") {
+    throw new Error("请使用2.0版本的swagger");
+  }
   if (tag) {
     const { tags } = res;
     const choices = (tags || []).map(({ name, description }) => {
@@ -60,6 +62,7 @@ export async function run(
     });
   }
   data = defs + data;
+  data = createHeader(res) + "\n\n" + data;
   writeFileSync(output, data);
 }
 
@@ -116,4 +119,18 @@ function pre(swagger: Swagger) {
   //     delete swagger.definitions[name];
   //   }
   // });
+}
+
+function createHeader(swagger: Swagger) {
+  const comments: string[] = ["powered by wyyt-fe"];
+  if (swagger.info?.title) {
+    comments.push(swagger.info.title);
+  }
+  if (swagger.info?.description) {
+    comments.push(`@description:  ${swagger.info.description}`);
+  }
+  if (swagger.info?.version) {
+    comments.push(`@version:  ${swagger.info.version}`);
+  }
+  return ["/**", ...comments.map((c) => ` * ${c}`), " */"].join("\n");
 }

@@ -37,7 +37,6 @@ function convertRequest(
         returnType = `${itemType}[]`;
       } else {
         returnType = transformSchemaObj(rep.schema);
-        console.log(url, returnType);
       }
     } else {
       returnType = transformSchemaObj(rep.schema || rep);

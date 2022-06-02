@@ -9,9 +9,11 @@ import { removeRef } from "./removeRef.js";
 const { writeFileSync } = fs;
 export async function run(input, output, options) {
     const { tag, mock } = options;
-    console.log(input, output, tag, mock);
     setMock(mock);
     const res = await load(input);
+    if (res.swagger !== "2.0") {
+        throw new Error("请使用2.0版本的swagger");
+    }
     if (tag) {
         const { tags } = res;
         const choices = (tags || []).map(({ name, description }) => {
@@ -45,6 +47,7 @@ export async function run(input, output, options) {
         });
     }
     data = defs + data;
+    data = createHeader(res) + "\n\n" + data;
     writeFileSync(output, data);
 }
 function pre(swagger) {
@@ -95,4 +98,18 @@ function pre(swagger) {
             delete swagger.paths[key];
         }
     });
+}
+function createHeader(swagger) {
+    var _a, _b, _c;
+    const comments = ["powered by wyyt-fe"];
+    if ((_a = swagger.info) === null || _a === void 0 ? void 0 : _a.title) {
+        comments.push(swagger.info.title);
+    }
+    if ((_b = swagger.info) === null || _b === void 0 ? void 0 : _b.description) {
+        comments.push(`@description:  ${swagger.info.description}`);
+    }
+    if ((_c = swagger.info) === null || _c === void 0 ? void 0 : _c.version) {
+        comments.push(`@version:  ${swagger.info.version}`);
+    }
+    return ["/**", ...comments.map((c) => ` * ${c}`), " */"].join("\n");
 }

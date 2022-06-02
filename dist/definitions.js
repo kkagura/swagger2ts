@@ -3,7 +3,6 @@ import { convertRefKey, isValidName, nodeType, parseSingleSimpleValue, tsUnionOf
 const COMMENT_RE = /\*\//g;
 export const LB_RE = /\r?\n/g;
 export function transformSchemaObjMap(objMap, root = true) {
-    const ouputArr = [];
     let output = "";
     Object.entries(objMap).forEach(([k, v]) => {
         const comments = createComment(v);

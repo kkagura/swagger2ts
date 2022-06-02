@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsc && node ./bin/cli ./examples/swagger2.json ./examples/swagger.ts -t",
+    "dev": "tsc && node ./bin/cli ./examples/swagger2.json ./examples/swagger.ts -t -n",
     "remote": "tsc && node ./bin/cli http://gateway.dev.wyyt.cc/bigplatform/v2/api-docs ./examples/swagger.ts -t"
   },
   "bin": {

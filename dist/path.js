@@ -30,7 +30,6 @@ function convertRequest(swagger, request, method, url) {
             }
             else {
                 returnType = transformSchemaObj(rep.schema);
-                console.log(url, returnType);
             }
         }
         else {
