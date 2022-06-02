@@ -13,7 +13,7 @@
     "wyyt-swagger-to-ts": "bin/cli.js"
   },
   "type": "module",
-  "author": "",
+  "author": "王建",
   "license": "ISC",
   "dependencies": {
     "fs-extra": "^10.1.0",
