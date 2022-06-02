@@ -22,7 +22,6 @@ export function removeWrapper(objectScheme: ObjectScheme): ObjectScheme {
   if (
     objectScheme?.type === "object" &&
     objectScheme.properties?.code &&
-    objectScheme.properties?.data &&
     (objectScheme.properties?.msg || objectScheme.properties?.message)
   ) {
     return objectScheme.properties.data;
