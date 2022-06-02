@@ -21,7 +21,7 @@ const flags = parser(args, {
   },
 });
 if (flags._.length !== 2) {
-  console.log("参数错误，请运行  查看参数");
+  console.log("参数错误，请运行 npx wyyt-swagger-to-ts -h 查看参数列表");
   process.exit(0);
 }
 
