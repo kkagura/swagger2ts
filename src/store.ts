@@ -31,3 +31,12 @@ export function addDefinition(key: string) {
 export function getDefinitions() {
   return definitions;
 }
+
+let mock = true;
+export function setMock(m: boolean) {
+  mock = m;
+}
+
+export function getMock() {
+  return mock;
+}

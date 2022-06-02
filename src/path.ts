@@ -1,7 +1,8 @@
 import { transformSchemaObj } from "./definitions.js";
 import Swagger, { SwaggerPath, SwaggerRequest } from "types";
 import { convertRefKey, nodeType } from "./utils.js";
-import { getRef } from "store.js";
+import { getMock, getRef } from "./store.js";
+import convertMockObjectType from "./mock.js";
 
 export function convertPath(swagger: Swagger, path: SwaggerPath, url: string) {
   let codes = "\n\n";
@@ -29,8 +30,15 @@ function convertRequest(
     if (["string", "number", "boolean", "unknown", "any"].includes(type)) {
       returnType = transformSchemaObj(obj);
     } else if (type === "array" && obj.items) {
-      const itemType = transformSchemaObj(obj.items);
-      returnType = `${itemType}[]`;
+      const itemType = nodeType(obj.items);
+      if (
+        ["string", "number", "boolean", "unknown", "any"].includes(itemType)
+      ) {
+        returnType = `${itemType}[]`;
+      } else {
+        returnType = transformSchemaObj(rep.schema);
+        console.log(url, returnType);
+      }
     } else {
       returnType = transformSchemaObj(rep.schema || rep);
     }
@@ -56,10 +64,27 @@ function convertRequest(
   } else if (dataParameters.length) {
     bodyData.push(`data: {${dataParameters.join(", ")}}`);
   }
+  const shouldMock = getMock();
+  bodyData = bodyData.map((value, index, array) => {
+    return !shouldMock && index == array.length - 1 ? value : value + ",";
+  });
+  if (shouldMock) {
+    const mock = convertMockObjectType(swagger, "", rep.schema);
+    if (mock) {
+      let mockData = JSON.stringify(mock, undefined, 2).split("\n");
+      if (mockData.length === 1) {
+        bodyData.push("mock: " + mockData[0]);
+      } else if (mockData.length >= 3) {
+        bodyData.push("mock: " + mockData[0]);
+        mockData = mockData.slice(1);
+        bodyData.push(...mockData);
+      }
+    }
+  }
 
   const codes: string[] = [`export function ${operationId}(${params}) {`];
   codes.push(`return XHR${returnStr}({`);
-  codes.push(...bodyData.map((item) => item + ","));
+  codes.push(...bodyData);
   codes.push("})");
   codes.push("}");
   const res = `/**

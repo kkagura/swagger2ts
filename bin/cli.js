@@ -5,29 +5,33 @@ const HELP = `Usage
   $ swagger2ts [options]
 
 Options
-  --help, -h                   display this
-  --input, -i                  Specify input file
-  --output, -o                 Specify output file
-  --tag, -t
-  --list, -l
+  --help, -h                   用法参考
+  --tag, -t                    开启筛选
+  --no-mock, -n                不生成模拟数据
 `;
 
 const [, , ...args] = process.argv;
 const flags = parser(args, {
-  boolean: ["help", "tag"],
+  boolean: ["help", "tag", "no-mock"],
   number: [],
   alias: {
     help: ["h"],
-    output: ["o"],
-    input: ["i"],
     tag: ["t"],
-    list: ["l"],
+    "no-mock": ["n"],
   },
 });
+if (flags._.length !== 2) {
+  console.log("参数错误，请运行  查看参数");
+  process.exit(0);
+}
 
 if (flags.help || flags.h) {
   console.log(HELP);
   process.exit(0);
 }
+const [i, o] = flags._;
 
-run(flags.i, flags.o, flags.t);
+run(i, o, {
+  tag: flags.tag,
+  mock: !flags.n,
+});

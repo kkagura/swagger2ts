@@ -3,7 +3,7 @@ import fs from "fs-extra";
 import { load, resolve } from "./load.js";
 import { convert } from "./transform.js";
 import prompts from "prompts";
-import { getDefinitions, setRef, setTags, tagExist } from "./store.js";
+import { getDefinitions, setMock, setRef, setTags, tagExist } from "./store.js";
 import Swagger, { ObjectScheme, SwaggerRequest } from "types/index.js";
 import {
   collectRefType,
@@ -15,7 +15,17 @@ import {
 import { removeRef, removeWrapper } from "./removeRef.js";
 const { writeFileSync } = fs;
 
-export async function run(input: string, output: string, tag: boolean) {
+export async function run(
+  input: string,
+  output: string,
+  options: {
+    tag: boolean;
+    mock: boolean;
+  }
+) {
+  const { tag, mock } = options;
+  console.log(input, output, tag, mock);
+  setMock(mock);
   const res = await load(input);
   if (tag) {
     const { tags } = res;

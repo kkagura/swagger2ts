@@ -21,7 +21,9 @@ export function transformSchemaObjMap(
     output += comments;
     output += "\n";
     output += root
-      ? `export interface ${isValidName(k) ? k : getRef(k)}`
+      ? nodeType(v) === "array"
+        ? `export type ${isValidName(k) ? k : getRef(k)} = `
+        : `export interface ${isValidName(k) ? k : getRef(k)}`
       : `${k}: `;
     output += transformSchemaObj(v);
     output += "\n";
