@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import parser from "yargs-parser";
 import { run } from "../dist/index.js";
 
