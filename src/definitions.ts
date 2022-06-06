@@ -63,7 +63,14 @@ export function transformSchemaObj(node: any): string {
       break;
     }
     case "object": {
-      type = "{\n" + transformSchemaObjMap(node.properties || {}, false) + "}";
+      if (node.additionalProperties) {
+        type = `{ [key: string]:  ${transformSchemaObj(
+          node.additionalProperties
+        )}}`;
+      } else {
+        type =
+          "{\n" + transformSchemaObjMap(node.properties || {}, false) + "}";
+      }
       break;
     }
 
