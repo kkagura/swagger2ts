@@ -4,7 +4,8 @@ import { convertRefKey } from "./utils.js";
 export default function convertMockObjectType(
   swagger: Swagger,
   key: string,
-  value: ObjectScheme
+  value: ObjectScheme,
+  stack: string[] = []
 ): undefined | string | string[] | object {
   if (!value) {
     return undefined;
@@ -54,12 +55,19 @@ export default function convertMockObjectType(
   } else if (value.type == "boolean") {
     return "@boolean()";
   } else if (value.type === "array") {
-    return [convertMockObjectType(swagger, key, value.items!)];
+    return [convertMockObjectType(swagger, key, value.items!, stack)].filter(
+      Boolean
+    );
   } else if (value.$ref) {
+    if (stack.includes(value.$ref)) {
+      return undefined;
+    }
+    stack.push(value.$ref);
     return convertMockObjectType(
       swagger,
       key,
-      swagger.definitions[convertRefKey(value.$ref)]
+      swagger.definitions[convertRefKey(value.$ref)],
+      stack
     );
   } else if (value.type === "object" || value.properties) {
     const typeObject = {};
@@ -73,7 +81,8 @@ export default function convertMockObjectType(
       const objValue = convertMockObjectType(
         swagger,
         key,
-        value.properties![key]
+        value.properties![key],
+        stack
       );
       if (objValue) {
         typeObject[objKey] = objValue;
