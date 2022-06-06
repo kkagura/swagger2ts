@@ -61,7 +61,7 @@ export async function run(
       [definitions[i]]: res.definitions[definitions[i]],
     });
   }
-  data = defs + data;
+  data = `const baseURL = "${res.basePath || ""}"\n\n` + defs + data;
   data = createHeader(res) + "\n\n" + data;
   writeFileSync(output, data);
 }

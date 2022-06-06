@@ -49,6 +49,7 @@ function convertRequest(
   let bodyData: string[] = [];
   bodyData.push(`url: '${url}'`);
   bodyData.push(`method: '${method}'`);
+  bodyData.push("baseURL");
   const queryParameters = parameters
     .filter((p) => p.in === "query")
     .map((p) => p.name);
