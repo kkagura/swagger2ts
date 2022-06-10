@@ -32,3 +32,20 @@ export function setMock(m) {
 export function getMock() {
     return mock;
 }
+const pathMap = new Map();
+export function addPathMethod(path, method) {
+    const methods = pathMap.get(path);
+    if (!methods) {
+        pathMap.set(path, [method]);
+    }
+    else {
+        methods.push(method);
+    }
+}
+export function methodExist(path, method) {
+    var _a;
+    if (pathMap.size === 0) {
+        return true;
+    }
+    return !!((_a = pathMap.get(path)) === null || _a === void 0 ? void 0 : _a.includes(method));
+}

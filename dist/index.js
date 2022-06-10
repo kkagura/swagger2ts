@@ -3,18 +3,50 @@ import fs from "fs-extra";
 import { load } from "./load.js";
 import { convert } from "./transform.js";
 import prompts from "prompts";
-import { getDefinitions, setMock, setRef, setTags, tagExist } from "./store.js";
+import { addPathMethod, getDefinitions, methodExist, setMock, setRef, setTags, tagExist, } from "./store.js";
 import { collectRefType, convertRefKey, isValidName, upperFirst, } from "./utils.js";
 import { removeRef } from "./removeRef.js";
 const { writeFileSync } = fs;
 export async function run(input, output, options) {
-    const { tag, mock } = options;
+    const { tag, mock, list } = options;
     setMock(mock);
     const res = await load(input);
     if (res.swagger !== "2.0") {
         throw new Error("请使用2.0版本的swagger");
     }
-    if (tag) {
+    if (list) {
+        const { paths } = res;
+        const rows = [];
+        Object.keys(paths).forEach((url) => {
+            Object.keys(paths[url]).forEach((method) => {
+                rows.push({
+                    method: method.toUpperCase(),
+                    url,
+                    description: paths[url][method].summary,
+                });
+            });
+        });
+        console.table(rows, ["description", "method", "url"]);
+        const i = await prompts({
+            type: "text",
+            name: "pathNames",
+            message: "输入需要生成的接口索引，以英文逗号分隔，如 0,2,4，直接回车将生成所有接口",
+        });
+        const pathNames = i.pathNames;
+        if (pathNames) {
+            pathNames.split(",").forEach((index) => {
+                const i = parseInt(index);
+                if (i >= 0 && i < rows.length) {
+                    const { method, url } = rows[index];
+                    addPathMethod(url, method);
+                }
+                else {
+                    throw new Error("输入值不合法");
+                }
+            });
+        }
+    }
+    else if (tag) {
         const { tags } = res;
         const choices = (tags || []).map(({ name, description }) => {
             return {
@@ -58,7 +90,12 @@ function pre(swagger) {
         Object.keys(path).forEach((method) => {
             var _a, _b, _c, _d, _e;
             const request = path[method];
-            const exist = request.tags.some((tag) => tagExist(tag));
+            let exist = request.tags.some((tag) => tagExist(tag));
+            if (!exist) {
+                delete path[method];
+                return;
+            }
+            exist = methodExist(key, method.toUpperCase());
             if (!exist) {
                 delete path[method];
                 return;

@@ -11,17 +11,19 @@ Options
   --help, -h                   用法参考
   --tag, -t                    开启筛选
   --no-mock, -n                不生成模拟数据
+  --list, -l                   接口列表
 `;
 
 const [, , ...args] = process.argv;
 const flags = parser(args, {
-  boolean: ["help", "tag", "no-mock", "version"],
+  boolean: ["help", "tag", "no-mock", "version", "list"],
   number: [],
   alias: {
     help: ["h"],
     tag: ["t"],
     "no-mock": ["n"],
     version: ["v"],
+    list: ["l"]
   },
 });
 
@@ -45,4 +47,5 @@ const [i, o] = flags._;
 run(i, o, {
   tag: flags.tag,
   mock: !flags.n,
+  list: flags.l
 });
